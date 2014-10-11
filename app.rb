@@ -3,7 +3,7 @@ require "faraday"
 
 class ReleaseManager < Sinatra::Application
   before do
-    @conn = Faraday.new(:url => "https://www.pivotaltracker.com/services/v5/projects/1185380") do | faraday |
+    @conn = Faraday.new(:url => "https://www.pivotaltracker.com") do | faraday |
       faraday.request  :url_encoded
       faraday.response :logger
       faraday.adapter  Faraday.default_adapter
@@ -18,7 +18,7 @@ class ReleaseManager < Sinatra::Application
 
     if payload["changes"][0]["new_values"]["current_state"] == "accepted"
       p payload
-      status = @conn.post "/stories", '{"name": "Testing"}'
+      status = @conn.post "/services/v5/projects/1185380/stories", '{"name": "Testing"}'
       p status
     end
   end
