@@ -8,6 +8,8 @@ class ReleaseManager < Sinatra::Application
       faraday.response :logger
       faraday.adapter  Faraday.default_adapter
     end
+
+    @conn.headers = {"Content-Type" => "application/json", "X-TrackerToken" => ENV["TRACKER_API_KEY"]}
   end
 
   post "/story" do
@@ -16,13 +18,7 @@ class ReleaseManager < Sinatra::Application
 
     if payload["changes"][0]["new_values"]["current_state"] == "accepted"
       p payload
-
-      @conn.post do | req |
-        req.url "/stories"
-        req.headers["Content-Type"] = "application/json"
-        req.headers["X-TrackerToken"] = ENV["TRACKER_API_KEY"]
-        req.body = '{"name": "Testing"}'
-      end
+      @conn.post "/stories", '{"name": "Testing"}'
     end
   end
 end
