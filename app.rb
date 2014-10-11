@@ -1,4 +1,5 @@
 require "json"
+require "faraday"
 
 class ReleaseManager < Sinatra::Application
   before do
