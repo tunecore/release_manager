@@ -18,8 +18,16 @@ class ReleaseManager < Sinatra::Application
 
     if payload["changes"][0]["new_values"]["current_state"] == "accepted"
       p payload
-      status = @conn.post "/services/v5/projects/1185380/stories", '{"name": "Testing"}'
-      p status
+      status = @conn.post "/services/v5/projects/1185380/stories", story_details(payload)
     end
+  end
+
+  def story_details p
+    { name: p["primary_resources"][0]["name"],
+      description: p["primary_resources"][0]["url"],
+      story_type: p["primary_resources"][0]["story_type"],
+      current_state: "accepted",
+      estimate: 0
+    }
   end
 end
