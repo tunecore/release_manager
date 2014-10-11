@@ -23,11 +23,12 @@ class ReleaseManager < Sinatra::Application
   end
 
   def story_details p
+    JSON.generate(
     { name: p["primary_resources"][0]["name"],
       description: p["primary_resources"][0]["url"],
       story_type: p["primary_resources"][0]["story_type"],
       current_state: "accepted",
       estimate: 0
-    }
+    })
   end
 end
