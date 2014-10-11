@@ -8,7 +8,6 @@ class ReleaseManager < Sinatra::Application
   post "/story" do
     request.body.rewind
     payload = JSON.parse request.body.read
-    p payload["changes"]["original_values"]
-    p payload["changes"]["new_values"]
+    p payload["changes"]
   end
 end
