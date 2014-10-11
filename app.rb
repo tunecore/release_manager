@@ -8,7 +8,9 @@ class ReleaseManager < Sinatra::Application
   post "/story" do
     request.body.rewind
     payload = JSON.parse request.body.read
-    p payload["changes"][0]["original_values"]
-    p payload["changes"][0]["new_values"]
+
+    if payload["changes"][0]["new_values"]["current_state"] == "accepted"
+      p payload
+    end
   end
 end
