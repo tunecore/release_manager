@@ -4,6 +4,7 @@ gem "sinatra"
 gem "dotenv"
 gem "json"
 gem "thin"
+gem "faraday"
 
 group :development, :test do
  gem "rspec"

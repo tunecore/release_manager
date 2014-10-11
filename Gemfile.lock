@@ -9,12 +9,15 @@ GEM
       dotenv-deployment (~> 0.0.2)
     dotenv-deployment (0.0.2)
     eventmachine (1.0.3)
+    faraday (0.9.0)
+      multipart-post (>= 1.2, < 3)
     ffi (1.9.3)
     json (1.8.1)
     listen (2.7.9)
       celluloid (>= 0.15.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
+    multipart-post (2.0.0)
     rack (1.5.2)
     rack-protection (1.5.3)
       rack
@@ -51,6 +54,7 @@ PLATFORMS
 
 DEPENDENCIES
   dotenv
+  faraday
   json
   rerun
   rspec
