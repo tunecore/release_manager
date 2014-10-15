@@ -26,7 +26,7 @@ class ReleaseManager < Sinatra::Application
       name: p["primary_resources"][0]["name"],
       description: p["primary_resources"][0]["url"],
       story_type: p["primary_resources"][0]["story_type"],
-      current_state: "delivered",
+      current_state: "finished",
     }
 
     story_details[:estimate] = 0 if story_details[:story_type] == "feature"
