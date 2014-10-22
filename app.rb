@@ -10,6 +10,8 @@ class ReleaseManager < Sinatra::Application
     end
 
     @conn.headers = {"Content-Type" => "application/json", "X-TrackerToken" => ENV["TRACKER_API_KEY"]}
+    @source_project_id = 319467
+    @target_project_id = 1185380
   end
 
   post "/story" do
@@ -17,7 +19,7 @@ class ReleaseManager < Sinatra::Application
     payload = JSON.parse request.body.read
 
     if payload["changes"][0]["new_values"]["current_state"] == "accepted"
-      status = @conn.post "/services/v5/projects/1185380/stories", story_details(payload)
+      status = @conn.post "/services/v5/projects/#{@target_project_id}/stories", story_details(payload)
     end
   end
 
@@ -27,13 +29,22 @@ class ReleaseManager < Sinatra::Application
       description: p["primary_resources"][0]["url"],
       story_type: p["primary_resources"][0]["story_type"],
       current_state: "finished",
-      labels: []
+      labels: get_labels(p["primary_resources"][0]["id"])
     }
-
-    # p["changes"][0]["new_values"]["labels"].each{ | label | story_details[:labels] << {"name" => label} }
 
     story_details[:estimate] = 0 if story_details[:story_type] == "feature"
 
     JSON.generate story_details
+  end
+
+  def get_labels story_id
+    labels = JSON.parse( @conn.get("/services/v5/projects/#{@source_project_id}/stories/#{story_id}").body )["labels"]
+    extract_label_names labels
+  end
+
+  def extract_label_names label_objects
+    label_objects.each_with_object([]) do | o, labels |
+      labels << {"name" => o["name"] }
+    end
   end
 end
