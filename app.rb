@@ -17,7 +17,7 @@ class ReleaseManager < Sinatra::Application
   post "/story" do
     request.body.rewind
     payload = JSON.parse request.body.read
-
+p payload
     if payload["changes"][0]["new_values"]["current_state"] == "accepted"
       status = @conn.post "/services/v5/projects/#{@target_project_id}/stories", story_details(payload)
     end
