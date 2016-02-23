@@ -1,7 +1,15 @@
 require "json"
 require "faraday"
+require "pp"
 
 class ReleaseManager < Sinatra::Application
+  configure do 
+    enable :logging
+    file = File.new("#{settings.root}/log/#{settings.environment}.log", 'a+')
+    file.sync = true
+    use Rack::CommonLogger, file
+  end
+
   before do
     @conn = Faraday.new(:url => "https://www.pivotaltracker.com") do | faraday |
       faraday.request  :url_encoded
@@ -10,7 +18,6 @@ class ReleaseManager < Sinatra::Application
     end
 
     @conn.headers = {"Content-Type" => "application/json", "X-TrackerToken" => ENV["TRACKER_API_KEY"]}
-    @source_project_id = 319467
     @target_project_id = 1185380
   end
 
@@ -18,8 +25,10 @@ class ReleaseManager < Sinatra::Application
     request.body.rewind
     payload = JSON.parse request.body.read
 
-    if payload["changes"][0]["new_values"]["current_state"] == "accepted"
-      status = @conn.post "/services/v5/projects/#{@target_project_id}/stories", story_details(payload)
+    if payload["highlight"] == "accepted"
+      logger.info "Posting #{payload["primary_resources"][0]["id"]} to Release project"
+      res = @conn.post "/services/v5/projects/#{@target_project_id}/stories", story_details(payload)
+      logger.info res.status
     end
   end
 
@@ -29,7 +38,7 @@ class ReleaseManager < Sinatra::Application
       description: p["primary_resources"][0]["url"],
       story_type: p["primary_resources"][0]["story_type"],
       current_state: "finished",
-      labels: get_labels(p["primary_resources"][0]["id"])
+      labels: get_labels(p["primary_resources"][0]["id"], p["project"]["id"])
     }
 
     story_details[:estimate] = 0 if story_details[:story_type] == "feature"
@@ -37,8 +46,8 @@ class ReleaseManager < Sinatra::Application
     JSON.generate story_details
   end
 
-  def get_labels story_id
-    labels = JSON.parse( @conn.get("/services/v5/projects/#{@source_project_id}/stories/#{story_id}").body )["labels"]
+  def get_labels story_id, project_id
+    labels = JSON.parse( @conn.get("/services/v5/projects/#{project_id}/stories/#{story_id}").body )["labels"]
     extract_label_names labels
   end
 
