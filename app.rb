@@ -21,6 +21,10 @@ class ReleaseManager < Sinatra::Application
     @target_project_id = 1185380
   end
 
+  post "/copy_to_qa" do
+    logger.warn "Posting #{payload["primary_resources"][0]["id"]} to QA project"
+  end
+
   post "/story" do
     request.body.rewind
     payload = JSON.parse request.body.read
