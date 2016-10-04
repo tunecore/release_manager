@@ -18,20 +18,36 @@ class ReleaseManager < Sinatra::Application
     end
 
     @conn.headers = {"Content-Type" => "application/json", "X-TrackerToken" => ENV["TRACKER_API_KEY"]}
-    @target_project_id = 1185380
   end
 
   post "/copy_to_qa" do
-    logger.warn "Posting #{payload["primary_resources"][0]["id"]} to QA project"
+    request.body.rewind
+    payload = JSON.parse request.body.read
+    target_project_id = 1543967
+
+    if payload["highlight"] == "accepted"
+      res = @conn.post "/services/v5/projects/#{target_project_id}/stories", story_details(payload)
+      logger.info res.status
+    end
   end
 
   post "/story" do
     request.body.rewind
     payload = JSON.parse request.body.read
+    target_project_id = 1185380
 
     if payload["highlight"] == "accepted"
-      logger.info "Posting #{payload["primary_resources"][0]["id"]} to Release project"
-      res = @conn.post "/services/v5/projects/#{@target_project_id}/stories", story_details(payload)
+      res = @conn.post "/services/v5/projects/#{target_project_id}/stories", story_details(payload)
+      logger.info res.status
+    end
+  end
+
+  def process_story project_id
+    request.body.rewind
+    payload = JSON.parse request.body.read
+
+    if payload["highlight"] == "accepted"
+      res = @conn.post "/services/v5/projects/#{project_id}/stories", story_details(payload)
       logger.info res.status
     end
   end
