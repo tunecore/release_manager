@@ -23,7 +23,7 @@ class ReleaseManager < Sinatra::Application
   post "/copy_to_qa" do
     request.body.rewind
     payload = JSON.parse request.body.read
-    target_project_id = 1543967
+    tartet_project_id = 1596523
 
     if payload["highlight"] == "accepted"
       res = @conn.post "/services/v5/projects/#{target_project_id}/stories", story_details(payload)
