@@ -1,0 +1,35 @@
+version: 2
+registries:
+  rubygems-server-gem-fury-io-techteam:
+    type: rubygems-server
+    url: https://gem.fury.io/techteam
+    token: "${{secrets.RUBYGEMS_SERVER_GEM_FURY_IO_TECHTEAM_TOKEN}}"
+  rubygems-server-enterprise-contribsys-com:
+    type: rubygems-server
+    url: https://enterprise.contribsys.com
+    username: "${{secrets.RUBYGEMS_SERVER_ENTERPRISE_CONTRIBSYS_COM_USERNAME}}"
+    password: "${{secrets.RUBYGEMS_SERVER_ENTERPRISE_CONTRIBSYS_COM_PASSWORD}}"
+  rubygems-server-awsgems2-tunecore-com-9292:
+    type: rubygems-server
+    url: https://awsgems2.tunecore.com:9292
+    username: "${{secrets.RUBYGEMS_SERVER_AWSGEMS2_TUNECORE_COM_9292_USERNAME}}"
+    password: "${{secrets.RUBYGEMS_SERVER_AWSGEMS2_TUNECORE_COM_9292_PASSWORD}}"
+
+updates:
+- package-ecosystem: bundler
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "10:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: faraday
+    versions:
+    - 1.3.0
+  - dependency-name: ffi
+    versions:
+    - 1.14.2
+  registries:
+  - rubygems-server-gem-fury-io-techteam
+  - rubygems-server-enterprise-contribsys-com
+  - rubygems-server-awsgems2-tunecore-com-9292
